@@ -17,7 +17,7 @@ Launch the script in command line with
 > 
 > python gui_GRAD_TEST.py
 
-If any troubles with pypulseq arise try to use 
+If any troubles with pypulseq or numpy datatype arise try to use 
 > pip install git+https://github.com/imr-framework/pypulseq
 
 instead of
