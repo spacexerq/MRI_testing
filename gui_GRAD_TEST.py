@@ -2,13 +2,13 @@
 """
 Created on Mon Jul  3 17:53:21 2023
 
-@author: zilya
+@author: zilya, spacexerq
 """
 
 import tkinter as tk
 from tkinter import ttk
 from types import SimpleNamespace
-from testing.sequences.seqgen.seqgen_GRAD_TEST import *
+from sequences.seqgen.seqgen_GRAD_TEST import *
 from datetime import datetime
 import json
 
