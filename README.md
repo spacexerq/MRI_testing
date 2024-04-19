@@ -1,8 +1,12 @@
-# CREATED:
+### CREATED:
 ITMO Univeristy
+
 Zilya Badrieva, Nikita Babich
+
 April 2024
 
+
+# Description
 This script creates simple gradient sequence in .seq format. 
 All the result sequences in .txt are stores in /grad_output/ directory
 
