@@ -11,6 +11,8 @@ This script creates simple gradient sequence in .seq format.
 All the result sequences in .txt are stores in /grad_output/ directory
 
 Launch the script in command line with 
+> git clone https://github.com/spacexerq/MRI_testing
+> cd /MRI_testing/
 > python gui_GRAD_TEST.py
 
 If any troubles with pypulseq arise try to use 
