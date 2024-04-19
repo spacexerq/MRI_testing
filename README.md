@@ -19,3 +19,7 @@ If any troubles with pypulseq arise try to use
 instead of
 
 > pip install pypulseq
+
+
+## Optional
+There is some already created sequences inside directories - could be used if needed. If not, you can delete .seq, .json and .txt files without any problems.
