@@ -1,10 +1,10 @@
 {
-    "G_amp_max": 425760.0,
+    "G_amp_max": 383184.00000000006,
     "G_slew_max": 1277280000.0,
     "gamma": 42576000.0,
     "grad_raster_time": 1e-05,
     "rf_raster_time": 1e-06,
-    "grad_amp": 425760.0,
+    "grad_amp": 383184.00000000006,
     "NA": 128,
     "t_grad": 0.01,
     "delay_1": 0.02,

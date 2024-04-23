@@ -16,7 +16,7 @@ import json
 def set_limits():
     # Задание общих аппаратных характкристик
     gamma = 42.576e6  # Hz/T    Гиромагнитное отношение водорода
-    G_amp_max_mT_m = 10  # mT/m.   Максимальный градиент
+    G_amp_max_mT_m = 9  # mT/m.   Максимальный градиент
     G_amp_max = G_amp_max_mT_m * 1e-3 * gamma  # Hz/m.   Максимальный градиент
     G_slew_max_T_m_s = 30  # T/m/s.  Максимальная скорость нарастания
     G_slew_max = G_slew_max_T_m_s * gamma  # Hz/m/s. Максимальная скорость нарастания

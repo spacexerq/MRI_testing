@@ -4,10 +4,11 @@ Created on Fri Apr  5 10:43:09 2024
 
 @author: zilya
 """
-
+from copy import deepcopy as dcopy
 import pypulseq as pp
 import numpy as np
 from pulseq_fixed import sequence_fixed as puls_fix
+
 
 def seqgen_GRAD_TEST(param, filename):
     # Read scanner parameters from the params structure
@@ -54,41 +55,56 @@ def seqgen_GRAD_TEST(param, filename):
         seq.add_block(delay2)
     # print(pp.check_timing.check_timing(seq))
     seq_output_dict = seq.waveforms_export(time_range=(0, 3))
-    output_seq(seq_output_dict, filename)
+    output_seq(seq_output_dict, filename, param)
     return seq
 
 
-def output_seq(dict, filename):
+def output_seq(dict, filename, param):
     """
     The interpretation from pypulseq format of sequence to the files needed to analog part of MRI
 
     :param dict: Dictionary of the impulse sequence pypulseq provided
 
-    :return: files in "data_output_seq/" directory of every type of amplitudes and time points
+    :return: files in "grad_output/" directory of every type of amplitudes and time points
 
     """
-    loc_t_gx = dict['t_gx']
-    loc_t_gy = dict['t_gy']
-    loc_t_gz = dict['t_gz']
-    loc_gx = dict['gx']
-    loc_gy = dict['gy']
-    loc_gz = dict['gz']
-    out_name = "grad_output/"+filename+"_"
-    with open(out_name+'t_gx.txt', 'w') as f:
-        data = str(tuple(loc_t_gx))
-        f.write(data)
-    with open(out_name+'t_gy.txt', 'w') as f:
-        data = str(tuple(loc_t_gy))
-        f.write(data)
-    with open(out_name+'t_gz.txt', 'w') as f:
-        data = str(tuple(loc_t_gz))
-        f.write(data)
-    with open(out_name+'gx.txt', 'w') as f:
-        data = str(tuple(loc_gx))
-        f.write(data)
-    with open(out_name+'gy.txt', 'w') as f:
-        data = str(tuple(loc_gy))
-        f.write(data)
-    with open(out_name+'gz.txt', 'w') as f:
-        data = str(tuple(loc_gz))
-        f.write(data)
+    loc_t_gx = gradient_time_convertation(param, dict['t_gx'])
+    loc_t_gy = gradient_time_convertation(param, dict['t_gy'])
+    loc_t_gz = gradient_time_convertation(param, dict['t_gz'])
+    loc_gx = gradient_ampl_convertation(param, dict['gx'])
+    loc_gy = gradient_ampl_convertation(param, dict['gy'])
+    loc_gz = gradient_ampl_convertation(param, dict['gz'])
+    gx_out = [loc_gx, loc_t_gx]
+    gy_out = [loc_gy, loc_t_gy]
+    gz_out = [loc_gz, loc_t_gz]
+    out_name = "grad_output/" + filename + "_"
+    np.savetxt(out_name + 'gx.txt', np.transpose(gx_out), fmt='%10.0f')
+    np.savetxt(out_name + 'gy.txt', np.transpose(gy_out), fmt='%10.0f')
+    np.savetxt(out_name + 'gz.txt', np.transpose(gz_out), fmt='%10.0f')
+
+
+def gradient_time_convertation(param, time_sample):
+    g_raster_time = param.grad_raster_time
+    time_sample/=g_raster_time
+    return time_sample
+
+
+def gradient_ampl_convertation(param, gradient_herz):
+    """
+    Helper function that convert amplitudes to dimensionless format for machine
+    1 bit for sign, 15 bits of numbers
+
+    :param gradient_herz: 2D array of amplitude and time points in Hz/m
+
+    :return: gradient_dimless: 2D array of dimensionless points
+
+    """
+    # amplitude raster is 32768
+    # maximum grad = 10 mT/m
+    # artificial gap is 1 mT/m so 9 mT/m is now should be split in parts
+    amplitude_max = param.G_amp_max
+    amplitude_raster = 32767
+    step_Hz_m = amplitude_max/amplitude_raster  # Hz/m step gradient
+    gradient_dimless = gradient_herz/step_Hz_m*1000
+    # assert abs(any(gradient_dimless)) > 32768, 'Amplitude is higher than expected, check the rate number'
+    return gradient_dimless
