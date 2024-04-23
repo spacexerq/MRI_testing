@@ -16,7 +16,7 @@ import json
 def set_limits():
     # Задание общих аппаратных характкристик
     gamma = 42.576e6  # Hz/T    Гиромагнитное отношение водорода
-    G_amp_max_mT_m = 9  # mT/m.   Максимальный градиент
+    G_amp_max_mT_m = 10  # mT/m.   Максимальный градиент
     G_amp_max = G_amp_max_mT_m * 1e-3 * gamma  # Hz/m.   Максимальный градиент
     G_slew_max_T_m_s = 30  # T/m/s.  Максимальная скорость нарастания
     G_slew_max = G_slew_max_T_m_s * gamma  # Hz/m/s. Максимальная скорость нарастания
@@ -48,8 +48,8 @@ def set_limits():
     AU_min, AU_max = 0, 128
     NA_min, NA_max = 1, 128
     t_grad_min, t_grad_max = 1e-3, 50e-3
-    delay_1_min, delay_1_max = 1e-3, 50e-3
-    delay_2_min, delay_2_max = 1e-3, 50e-3
+    delay_1_min, delay_1_max = 0, 50e-3
+    delay_2_min, delay_2_max = 0, 50e-3
 
     M0_dj.label1_1.configure(text=str(AU_min))
     M0_dj.label1_2.configure(text=str(AU_max))
@@ -84,7 +84,7 @@ def save_param():
     output_filename = str(M0_dj.textBox17.get())
     directory_name = "sequences/"
     output_sequence = seqgen_GRAD_TEST(param, output_filename)
-    # output_sequence.plot()
+    output_sequence.plot()
     output_sequence.write(directory_name+output_filename)
     file = open(directory_name+output_filename + ".json", 'w')
     json.dump(param.__dict__, file, indent=4)
@@ -119,7 +119,7 @@ M0_dj.label0_1.grid(row=0, column=2)
 M0_dj.label0_2 = tk.Label(Main, text="max", width=10)
 M0_dj.label0_2.grid(row=0, column=3)
 
-tk.Label(Main, text='A.U.').grid(row=1, column=0, sticky="E")
+tk.Label(Main, text='Amplitude, A.U.').grid(row=1, column=0, sticky="E")
 M0_dj.textBox1 = tk.Entry(Main, width=7)
 M0_dj.textBox1.insert(0, AU)
 M0_dj.textBox1.grid(row=1, column=1)

@@ -74,15 +74,29 @@ def output_seq(dict, filename, param):
     loc_gx = gradient_ampl_convertation(param, dict['gx'])
     loc_gy = gradient_ampl_convertation(param, dict['gy'])
     loc_gz = gradient_ampl_convertation(param, dict['gz'])
-    gx_out = [loc_gx, loc_t_gx]
-    gy_out = [loc_gy, loc_t_gy]
-    gz_out = [loc_gz, loc_t_gz]
+    gx_out = np.transpose([loc_gx, loc_t_gx])
+    gy_out = np.transpose([loc_gy, loc_t_gy])
+    gz_out = np.transpose([loc_gz, loc_t_gz])
     out_name = "grad_output/" + filename + "_"
-    np.savetxt(out_name + 'gx.txt', np.transpose(gx_out), fmt='%10.0f')
-    np.savetxt(out_name + 'gy.txt', np.transpose(gy_out), fmt='%10.0f')
-    np.savetxt(out_name + 'gz.txt', np.transpose(gz_out), fmt='%10.0f')
+    np.savetxt(out_name + 'gx.txt', gx_out, fmt='%10.0f')
+    np.savetxt(out_name + 'gy.txt', np.unique(gy_out, axis=0), fmt='%10.0f')
+    np.savetxt(out_name + 'gz.txt', np.unique(gz_out, axis=0), fmt='%10.0f')
 
 
+def unique_rows(data):
+    """
+    Helper function to delete duplicates from gradient output arrays
+
+    input: data - 2D array of time and amplitude values formatted by protocol
+    output: data_out - 2D array without duplicates
+    """
+    data_out = dcopy(data)
+    total_len = len(data)
+    for i in range(total_len):
+        data_temp = data.pop(i)
+        if data[i] == any(data_temp):
+            data_out.pop(i)
+    return data_out
 def gradient_time_convertation(param, time_sample):
     g_raster_time = param.grad_raster_time
     time_sample/=g_raster_time
