@@ -11,12 +11,13 @@ from types import SimpleNamespace
 from sequences.seqgen.seqgen_GRAD_TEST import *
 from datetime import datetime
 import json
+import asyncio
 
 
 def set_limits():
     # Задание общих аппаратных характкристик
     gamma = 42.576e6  # Hz/T    Гиромагнитное отношение водорода
-    G_amp_max_mT_m = 10  # mT/m.   Максимальный градиент
+    G_amp_max_mT_m = 9  # mT/m.   Максимальный градиент
     G_amp_max = G_amp_max_mT_m * 1e-3 * gamma  # Hz/m.   Максимальный градиент
     G_slew_max_T_m_s = 30  # T/m/s.  Максимальная скорость нарастания
     G_slew_max = G_slew_max_T_m_s * gamma  # Hz/m/s. Максимальная скорость нарастания
@@ -46,10 +47,10 @@ def set_limits():
     grad_amp = grad_step * AU
 
     AU_min, AU_max = 0, 128
-    NA_min, NA_max = 1, 128
+    NA_min, NA_max = 1, "-"
     t_grad_min, t_grad_max = 1e-3, 50e-3
-    delay_1_min, delay_1_max = 0, 50e-3
-    delay_2_min, delay_2_max = 0, 50e-3
+    delay_1_min, delay_1_max = 1e-3, 50e-3
+    delay_2_min, delay_2_max = 1e-3, 50e-3
 
     M0_dj.label1_1.configure(text=str(AU_min))
     M0_dj.label1_2.configure(text=str(AU_max))
@@ -78,27 +79,81 @@ def set_limits():
     param.delay_2 = delay_2
     param.grad1_pol = grad1_pol
     param.grad2_pol = grad2_pol
+    param.filename = str(round(grad_amp)) + "amp_" + str(round(t_grad)) + "dt_" + str(round(delay_1)) + "del1_" + str(
+        round(delay_2)) + "del2.png"
 
 
 def save_param():
     output_filename = str(M0_dj.textBox17.get())
     directory_name = "sequences/"
     output_sequence = seqgen_GRAD_TEST(param, output_filename)
-    output_sequence.plot()
+    output_sequence.plot(save=True, plot_now=False, savename="images/" + output_filename)
     output_sequence.write(directory_name+output_filename)
     file = open(directory_name+output_filename + ".json", 'w')
     json.dump(param.__dict__, file, indent=4)
     file.close()
 
 
-### Default values ###
+def create_testing(grad1_pol=1, grad2_pol=1, dir_name="plus_pol/"):
+    # Задание общих аппаратных характкристик
+    gamma = 42.576e6  # Hz/T    Гиромагнитное отношение водорода
+    G_amp_max_mT_m = 9  # mT/m.   Максимальный градиент
+    G_amp_max = G_amp_max_mT_m * 1e-3 * gamma  # Hz/m.   Максимальный градиент
+    G_slew_max_T_m_s = 30  # T/m/s.  Максимальная скорость нарастания
+    G_slew_max = G_slew_max_T_m_s * gamma  # Hz/m/s. Максимальная скорость нарастания
+    rf_raster_time = 1e-6  # s.      Растр РЧ импульса
+    grad_raster_time = 10e-6  # s.      Растр градиентов
+    tau_max = G_amp_max / G_slew_max  # s.      Максимальное время нарастания градиента с учетом макс скорости нарастания
+    tau_max = np.ceil(tau_max / grad_raster_time) * grad_raster_time
+    N_grad = 128
+    grad_step = G_amp_max / N_grad
 
+    AU_min, AU_max = 0, 128
+    NA_min, NA_max = 1, "-"
+    t_grad_min, t_grad_max = 1e-3, 50e-3
+    delay_1_min, delay_1_max = 1e-3, 50e-3
+    delay_2_min, delay_2_max = 1e-3, 50e-3
+    reps_array = [1, 5, 20, 64, 128]
+    for AU in range(8, 129, 8):
+        for NA in reps_array:
+            t_grad = 1e-3
+            while t_grad < 50e-3:
+                delay_1 = 0
+                while delay_1 < 50e-3:
+                    delay_2 = delay_1
+                    grad_amp = grad_step * AU
+                    global param
+                    param = SimpleNamespace()
+                    param.G_amp_max = G_amp_max
+                    param.G_slew_max = G_slew_max
+                    param.gamma = gamma
+                    param.grad_raster_time = grad_raster_time
+                    param.rf_raster_time = rf_raster_time
+
+                    param.grad_amp = grad_amp
+                    # diff
+                    param.NA = NA
+                    param.t_grad = t_grad
+                    param.delay_1 = delay_1
+                    param.delay_2 = delay_2
+
+                    param.grad1_pol = grad1_pol
+                    param.grad2_pol = grad2_pol
+                    param.filename = str(round(grad_amp)) + "amp_" + str(round(t_grad)) + "dt_" + str(
+                        round(delay_1)) + "del.png"
+                    output_filename = dir_name + str(round(grad_amp)) + "amp_" + str(round(NA)) + "reps_"+ str(round(t_grad*1e3)) + "dt_" + str(
+                        round(delay_1*1e3)) + "del.txt"
+                    directory_name = "sequences/"
+                    output_sequence = seqgen_GRAD_TEST(param, output_filename)
+                    delay_1 += 5e-3
+                t_grad += 5e-3
+
+### Default values ###
 AU = 128
 NA = 128
 t_grad = 10e-3
 delay_1 = 20e-3
 delay_2 = 20e-3
-
 win = tk.Tk()
 win.title('GRAD_TEST')
 win.geometry("520x420+100+100")
@@ -111,15 +166,31 @@ notebook.pack(expand=True, fill='both')
 Main = tk.Frame(notebook)
 Main.pack(fill='both', expand=True)
 notebook.add(Main, text="Main")
-
+# #
 M0_dj = SimpleNamespace()
+#
+# create_testing(grad1_pol=1, grad2_pol=1, dir_name="plus_pol/")
+# create_testing(grad1_pol=-1, grad2_pol=-1, dir_name="min_pol/")
+# create_testing(grad1_pol=1, grad2_pol=-1, dir_name="mix_pol/")
+
+
+# async def main():
+#     task1 = asyncio.create_task(create_testing(grad1_pol=1, grad2_pol=1, dir_name="plus_pol/"))
+#     task2 = asyncio.create_task(create_testing(grad1_pol=-1, grad2_pol=-1, dir_name="min_pol/"))
+#     task3 = asyncio.create_task(create_testing(grad1_pol=1, grad2_pol=-1, dir_name="mix_pol/"))
+#
+#     await task1
+#     await task2
+#     await task3
+#
+# asyncio.run(main())
 
 M0_dj.label0_1 = tk.Label(Main, text="min", width=10)
 M0_dj.label0_1.grid(row=0, column=2)
 M0_dj.label0_2 = tk.Label(Main, text="max", width=10)
 M0_dj.label0_2.grid(row=0, column=3)
 
-tk.Label(Main, text='Amplitude, A.U.').grid(row=1, column=0, sticky="E")
+tk.Label(Main, text='A.U.').grid(row=1, column=0, sticky="E")
 M0_dj.textBox1 = tk.Entry(Main, width=7)
 M0_dj.textBox1.insert(0, AU)
 M0_dj.textBox1.grid(row=1, column=1)

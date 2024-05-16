@@ -54,7 +54,7 @@ def seqgen_GRAD_TEST(param, filename):
         seq.add_block(gradient_2)
         seq.add_block(delay2)
     # print(pp.check_timing.check_timing(seq))
-    seq_output_dict = seq.waveforms_export(time_range=(0, 3))
+    seq_output_dict = seq.waveforms_export()
     output_seq(seq_output_dict, filename, param)
     return seq
 
@@ -74,32 +74,26 @@ def output_seq(dict, filename, param):
     loc_gx = gradient_ampl_convertation(param, dict['gx'])
     loc_gy = gradient_ampl_convertation(param, dict['gy'])
     loc_gz = gradient_ampl_convertation(param, dict['gz'])
-    gx_out = np.transpose([loc_gx, loc_t_gx])
-    gy_out = np.transpose([loc_gy, loc_t_gy])
-    gz_out = np.transpose([loc_gz, loc_t_gz])
+    gx_out = duplicates_delete(np.transpose([loc_t_gx, loc_gx]))
+    gy_out = duplicates_delete(np.transpose([loc_t_gy, loc_gy]))
+    gz_out = duplicates_delete(np.transpose([loc_t_gz, loc_gz]))
     out_name = "grad_output/" + filename + "_"
     np.savetxt(out_name + 'gx.txt', gx_out, fmt='%10.0f')
-    np.savetxt(out_name + 'gy.txt', np.unique(gy_out, axis=0), fmt='%10.0f')
-    np.savetxt(out_name + 'gz.txt', np.unique(gz_out, axis=0), fmt='%10.0f')
+    # np.savetxt(out_name + 'gy.txt', gy_out, fmt='%10.0f')
+    # np.savetxt(out_name + 'gz.txt', gz_out, fmt='%10.0f')
 
 
-def unique_rows(data):
-    """
-    Helper function to delete duplicates from gradient output arrays
+def duplicates_delete(loc_list):
+    new_list = [[0]*2]
+    for i in range(len(loc_list)):
+        if loc_list[i][0] not in np.transpose(new_list)[0]:
+            new_list.append(loc_list[i])
+    return new_list
 
-    input: data - 2D array of time and amplitude values formatted by protocol
-    output: data_out - 2D array without duplicates
-    """
-    data_out = dcopy(data)
-    total_len = len(data)
-    for i in range(total_len):
-        data_temp = data.pop(i)
-        if data[i] == any(data_temp):
-            data_out.pop(i)
-    return data_out
+
 def gradient_time_convertation(param, time_sample):
     g_raster_time = param.grad_raster_time
-    time_sample/=g_raster_time
+    time_sample /= g_raster_time
     return time_sample
 
 
@@ -118,7 +112,7 @@ def gradient_ampl_convertation(param, gradient_herz):
     # artificial gap is 1 mT/m so 9 mT/m is now should be split in parts
     amplitude_max = param.G_amp_max
     amplitude_raster = 32767
-    step_Hz_m = amplitude_max/amplitude_raster  # Hz/m step gradient
-    gradient_dimless = gradient_herz/step_Hz_m*1000
+    step_Hz_m = amplitude_max / amplitude_raster  # Hz/m step gradient
+    gradient_dimless = gradient_herz / step_Hz_m * 1000
     # assert abs(any(gradient_dimless)) > 32768, 'Amplitude is higher than expected, check the rate number'
     return gradient_dimless
