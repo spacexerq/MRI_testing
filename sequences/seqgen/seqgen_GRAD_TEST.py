@@ -116,3 +116,4 @@ def gradient_ampl_convertation(param, gradient_herz):
     gradient_dimless = gradient_herz / step_Hz_m * 1000
     # assert abs(any(gradient_dimless)) > 32768, 'Amplitude is higher than expected, check the rate number'
     return gradient_dimless
+

@@ -113,40 +113,36 @@ def create_testing(grad1_pol=1, grad2_pol=1, dir_name="plus_pol/"):
     t_grad_min, t_grad_max = 1e-3, 50e-3
     delay_1_min, delay_1_max = 1e-3, 50e-3
     delay_2_min, delay_2_max = 1e-3, 50e-3
-    reps_array = [1, 5, 20, 64, 128]
-    for AU in range(8, 129, 8):
-        for NA in reps_array:
-            t_grad = 1e-3
-            while t_grad < 50e-3:
-                delay_1 = 0
-                while delay_1 < 50e-3:
-                    delay_2 = delay_1
-                    grad_amp = grad_step * AU
-                    global param
-                    param = SimpleNamespace()
-                    param.G_amp_max = G_amp_max
-                    param.G_slew_max = G_slew_max
-                    param.gamma = gamma
-                    param.grad_raster_time = grad_raster_time
-                    param.rf_raster_time = rf_raster_time
 
-                    param.grad_amp = grad_amp
-                    # diff
-                    param.NA = NA
-                    param.t_grad = t_grad
-                    param.delay_1 = delay_1
-                    param.delay_2 = delay_2
 
-                    param.grad1_pol = grad1_pol
-                    param.grad2_pol = grad2_pol
-                    param.filename = str(round(grad_amp)) + "amp_" + str(round(t_grad)) + "dt_" + str(
-                        round(delay_1)) + "del.png"
-                    output_filename = dir_name + str(round(grad_amp)) + "amp_" + str(round(NA)) + "reps_"+ str(round(t_grad*1e3)) + "dt_" + str(
-                        round(delay_1*1e3)) + "del.txt"
-                    directory_name = "sequences/"
-                    output_sequence = seqgen_GRAD_TEST(param, output_filename)
-                    delay_1 += 5e-3
-                t_grad += 5e-3
+    for i in range():
+        delay_2 = delay_1
+        grad_amp = grad_step * AU
+        global param
+        param = SimpleNamespace()
+        param.G_amp_max = G_amp_max
+        param.G_slew_max = G_slew_max
+        param.gamma = gamma
+        param.grad_raster_time = grad_raster_time
+        param.rf_raster_time = rf_raster_time
+
+        param.grad_amp = grad_amp
+        # diff
+        param.NA = 1
+        param.t_grad = t_grad
+        param.delay_1 = delay_1
+        param.delay_2 = delay_2
+
+        param.grad1_pol = grad1_pol
+        param.grad2_pol = grad2_pol
+        param.filename = str(round(grad_amp)) + "amp_" + str(round(t_grad)) + "dt_" + str(
+            round(delay_1)) + "del.png"
+        output_filename = dir_name + str(round(grad_amp)) + "amp_" + str(round(NA)) + "reps_"+ str(round(t_grad*1e3)) + "dt_" + str(
+            round(delay_1*1e3)) + "del.txt"
+        directory_name = "sequences/"
+        output_sequence = seqgen_GRAD_TEST(param, output_filename)
+        delay_1 += 5e-3
+    t_grad += 5e-3
 
 ### Default values ###
 AU = 128
