@@ -8,7 +8,7 @@ Created on Mon Jul  3 17:53:21 2023
 import tkinter as tk
 from tkinter import ttk
 from types import SimpleNamespace
-from sequences.seqgen.seqgen_GRAD_TEST import *
+from sequences.seqgen.OLD_seqgen_GRAD_TEST import *
 from datetime import datetime
 import json
 import asyncio
