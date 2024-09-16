@@ -6,7 +6,6 @@ Created on 05/09/2024
 """
 from numba import njit, prange
 
-
 from copy import deepcopy as dcopy
 import pypulseq as pp
 import numpy as np
@@ -206,10 +205,10 @@ def radio_ampl_convertation(rf_ampl, rf_raster=1e-6):
     out_rf_list = []
     rf_ampl_raster = 127
     rf_ampl_maximum = np.abs(max(rf_ampl))
-    proportional_cf_rf = rf_ampl_raster/rf_ampl_maximum
+    proportional_cf_rf = rf_ampl_raster / rf_ampl_maximum
     for rf_iter in range(len(rf_ampl)):
-        out_rf_list.append(round(rf_ampl[rf_iter].real*proportional_cf_rf))
-        out_rf_list.append(round(rf_ampl[rf_iter].imag*proportional_cf_rf))
+        out_rf_list.append(round(rf_ampl[rf_iter].real * proportional_cf_rf))
+        out_rf_list.append(round(rf_ampl[rf_iter].imag * proportional_cf_rf))
     return out_rf_list
 
 
@@ -246,6 +245,7 @@ def gradient_ampl_convertation(param, gradient_herz):
     gradient_dimless = gradient_herz / step_Hz_m * 1000
     # assert abs(any(gradient_dimless)) > 32768, 'Amplitude is higher than expected, check the rate number'
     return gradient_dimless
+
 
 def adc_correction(blocks_number_loc, seq_input_loc):
     """
@@ -292,157 +292,193 @@ def adc_event_edges(local_gate_adc):
     return num_begin_l, num_finish_l
 
 
-def synchronization(N_samples, RF_assistant, seq_dict_local, path='test1'):
+def synchronization(sync_sequence, synchro_block_timer=20e-9, path='test1/', TR_DELAY_L=20e-9, RF_DELAY_L=20e-9,
+                    START_DELAY_L=20e-9):
     ### MAIN LOOP ###
     ### ОСНОВНОЙ ЦИКЛ###
+    assert START_DELAY_L >= RF_DELAY_L
+    assert TR_DELAY_L >= synchro_block_timer
+    assert RF_DELAY_L >= synchro_block_timer
+    number_of_blocks = len(sync_sequence.block_events)
+    gate_adc = [0]
+    gate_rf = [0]
+    gate_tr_switch = [1]
+    gate_gx = [0]
+    gate_gy = [0]
+    gate_gz = [0]
+    blocks_duration = [START_DELAY_L]
+    adc_times_values = []
+    adc_times_starts= []
+    '''
+    ??? RF  GX  GY  GZ  ADC  EXT
+    0    1   2   3   4   5    6
+    '''
+    added_blocks = 0
+    for block_counter in range(number_of_blocks):
+        is_not_adc_block = True
 
-    for i in range(N_samples):
-        print(str(i)+"/"+str(N_samples))
-        # delaying of RF event for time period of local delay
-        # задержка RF события на период времени локальной задержки
-        if RF_assistant[0] - RF_raster < time_sample[i] < RF_assistant[0] + RF_raster:
-            RF_stop = int(RF_assistant[1] / time_step)
-            gate_rf[i:RF_stop] = 1.0
-            var = 1
+        if sync_sequence.block_events[block_counter + 1][5]:
+            is_not_adc_block = False
 
-        # mandatory disabling of RF gate due to ADC work same time
-        # принудительное отключение RF-шлюза из-за одновременной работы АЦП
-        gate_rf_2 = map(lambda x: time_sample[i] - ADC_raster < x < time_sample[i] + ADC_raster and 1 or 0,
-                        seq_dict_local['t_adc'])
-        if np.any(np.array(list(gate_rf_2)) > 0):
-            gate_rf[i] = 0.0
+            gate_adc.append(0)
+            gate_gx.append(gate_gx[-1])
+            gate_gy.append(gate_gy[-1])
+            gate_gz.append(gate_gz[-1])
+            gate_rf.append(gate_rf[-1])
+            blocks_duration[-1] -= TR_DELAY_L
+            blocks_duration.append(TR_DELAY_L)
+            gate_tr_switch.append(0)
+            added_blocks += 1
 
-        # TR switch with own delay before ADC turning
-        # TR перключение с собственной задержкой перед включением АЦП
-        gate_tr_1 = map(lambda x: time_sample[i] - ADC_raster < x < time_sample[i] + ADC_raster and 1 or 0,
-                        seq_dict_local['t_adc'])
-        if np.any(np.array(list(gate_tr_1)) > 0):
-            block_delay_tr = int(local_delay_tr / time_step)
-            gate_tr_switch[i - block_delay_tr:i + 1] = 0.0
+            gate_adc.append(1)
+            gate_tr_switch.append(0)
+        else:
+            gate_tr_switch.append(1)
+            gate_adc.append(0)
 
-        # first step of ADC gate - enabling
-        # первый шак АЦП шлюза - включение
-        gate_adc_1 = map(lambda x: time_sample[i] - ADC_raster < x < time_sample[i] + ADC_raster and 1 or 0,
-                         seq_dict_local['t_adc'])
-        if np.any(np.array(list(gate_adc_1)) > 0):
-            gate_adc[i] = 1.0
+        if sync_sequence.block_events[block_counter + 1][1] and is_not_adc_block:
+            gate_rf.append(1)
+            gate_gx.append(gate_gx[-1])
+            gate_gy.append(gate_gy[-1])
+            gate_gz.append(gate_gz[-1])
+            gate_adc.append(gate_adc[-1])
+            blocks_duration[-1] -= RF_DELAY_L
+            blocks_duration.append(RF_DELAY_L)
+            gate_tr_switch.append(gate_tr_switch[-1])
+            added_blocks += 1
 
-    # adc correction sue to rise and fall time of gradient
-    # АЦП коррекция в зависимости от времени нарастания или спада градиента
-    # defining time that ADC need to be disabled during of
-    # определение премени, когда АЦП необходимо отключить
-    # rise_time_loc, fall_time_loc = adc_correction(blocks_number, SEQ_INPUT)
+            gate_rf.append(1)
+
+        else:
+            gate_rf.append(0)
+
+        if sync_sequence.block_events[block_counter + 1][2]:
+            gate_gx.append(1)
+        else:
+            gate_gx.append(0)
+        if sync_sequence.block_events[block_counter + 1][3]:
+            gate_gy.append(1)
+        else:
+            gate_gy.append(0)
+        if sync_sequence.block_events[block_counter + 1][4]:
+            gate_gz.append(1)
+        else:
+            gate_gz.append(0)
+
+        current_block_dur = sync_sequence.block_durations[block_counter + 1]
+        blocks_duration.append(current_block_dur)
+
+    number_of_blocks += added_blocks
     '''
     test1 swap
     '''
-    rise_time_loc, fall_time_loc = 0, 0
-    num_beg, num_fin = adc_event_edges(gate_adc)
-    rise_time_tick = int(rise_time_loc / time_step)
-    fall_time_tick = int(rise_time_loc / time_step)
-    gate_adc[num_beg:num_beg + rise_time_tick] = 0.0
-    gate_adc[num_fin - fall_time_tick:num_fin + 1] = 0.0
-
     gates_release = {"adc": gate_adc,
                      "rf": gate_rf,
                      "tr_switch": gate_tr_switch,
                      "gx": gate_gx,
                      "gy": gate_gy,
                      "gz": gate_gz}
-    # print(gates_release)
-    sync_output(gates_release, sync_raster=SYNC_STEP)
-
-
-def sync_output(sync_dict, sync_raster=1e-6, path='test1/'):
-    RF_value = []
-    ADC_value = []
-    GX_value = []
-    GY_value = []
-    GZ_value = []
-    SW_value = []
-    count_values = []
-    flag_writing = True
-    time_block_begin_counter = 0
-    #TODO: testing all possibilities
-    for sync_iter in range(len(sync_dict['gx']) - 1):
-        if flag_writing:
-            RF_value.append(sync_dict['rf'][sync_iter])
-            ADC_value.append(sync_dict['adc'][sync_iter])
-            GX_value.append(sync_dict['gx'][sync_iter])
-            GY_value.append(sync_dict['gy'][sync_iter])
-            GZ_value.append(sync_dict['gz'][sync_iter])
-            SW_value.append(sync_dict['tr_switch'][sync_iter])
-            flag_writing = False
-        if any([
-            sync_dict['rf'][sync_iter] != sync_dict['rf'][sync_iter + 1],
-            sync_dict['adc'][sync_iter] != sync_dict['adc'][sync_iter + 1],
-            sync_dict['gx'][sync_iter] != sync_dict['gx'][sync_iter + 1],
-            sync_dict['gy'][sync_iter] != sync_dict['gy'][sync_iter + 1],
-            sync_dict['gz'][sync_iter] != sync_dict['gz'][sync_iter + 1],
-            sync_dict['tr_switch'][sync_iter] != sync_dict['tr_switch'][sync_iter + 1]
-        ]):
-            flag_writing = True
-            time_val = sync_iter + 1 - time_block_begin_counter
-            time_block_begin_counter = sync_iter + 1
-            count_values.append(time_val)
-    time_val = len(sync_dict['gx']) - time_block_begin_counter
-    count_values.append(time_val)
 
     doc, tag, text = Doc().tagtext()
-
-    number_of_blocks = len(RF_value)
     with tag('root'):
         with tag('ParamCount'):
             text(number_of_blocks)
         with tag('RF'):
             for RF_iter in range(number_of_blocks):
                 with tag('RF' + str(RF_iter + 1)):
-                    text(RF_value[RF_iter])
+                    text(gate_rf[RF_iter])
         with tag('SW'):
             for SW_iter in range(number_of_blocks):
                 with tag('SW' + str(SW_iter + 1)):
-                    text(SW_value[SW_iter])
+                    text(gate_tr_switch[SW_iter])
         with tag('ADC'):
             for ADC_iter in range(number_of_blocks):
+                if gate_adc[ADC_iter] == 1:
+                    adc_times_values.append(blocks_duration[ADC_iter])
+                    adc_times_starts.append(sum(blocks_duration[0:ADC_iter]))
                 with tag('ADC' + str(ADC_iter + 1)):
-                    text(ADC_value[ADC_iter])
+                    text(gate_adc[ADC_iter])
         with tag('GX'):
             for GX_iter in range(number_of_blocks):
                 with tag('GX' + str(GX_iter + 1)):
-                    text(GX_value[GX_iter])
+                    text(gate_gx[GX_iter])
         with tag('GY'):
             for GY_iter in range(number_of_blocks):
                 with tag('GY' + str(GY_iter + 1)):
-                    text(GY_value[GY_iter])
+                    text(gate_gy[GY_iter])
         with tag('GZ'):
             for GZ_iter in range(number_of_blocks):
                 with tag('GZ' + str(GZ_iter + 1)):
-                    text(GZ_value[GZ_iter])
+                    text(gate_gz[GZ_iter])
         with tag('CL'):
             for CL_iter in range(number_of_blocks):
                 with tag('CL' + str(CL_iter + 1)):
-                    text(count_values[CL_iter])
+                    text(int(blocks_duration[CL_iter] / synchro_block_timer))
 
     result = indent(
         doc.getvalue(),
         indentation=' ' * 4,
-        newline='\r\n'
+        newline='\r'
     )
-    sync_file = open(path + "sync.xml", "w")
+    sync_file = open(path + "sync_v2.xml", "w")
+    sync_file.write(result)
+    sync_file.close()
+
+    picoscope_set(adc_times_values, adc_times_starts)
+
+
+def picoscope_set(adc_val, adc_start, number_of_channels_l=8, sampling_freq_l=4e7, path='test1/'):
+    # sampling rate = 40 MHz = 4e7 1/s
+    # adc_val in seconds
+    adc_out_timings = []
+    for i in adc_val:
+        adc_out_timings.append(int(i*sampling_freq_l))
+
+    doc, tag, text, line = Doc().ttl()
+    with tag('root'):
+        with tag('points'):
+            with tag('title'):
+                text("Points")
+            with tag('value'):
+                text(str(adc_out_timings))
+        with tag('num_of_channels'):
+            with tag('title'):
+                text("Number of Channels")
+            with tag('value'):
+                text(number_of_channels_l)
+        with tag('times'):
+            with tag('title'):
+                text("Times")
+            with tag('value'):
+                text(str(adc_start).format('%.e'))
+        with tag('sample_freq'):
+            with tag('title'):
+                text("Sample Frequency")
+            with tag('value'):
+                text(sampling_freq_l)
+
+    result = indent(
+        doc.getvalue(),
+        indentation=' ' * 4,
+        newline='\r'
+    )
+    sync_file = open(path + "picoscope_params.xml", "w")
     sync_file.write(result)
     sync_file.close()
 
 
 if __name__ == "__main__":
-    # SEQ_INPUT, SEQ_DICT = seq_file_input(seq_file_name='sequences/turbo_FLASH_060924_0444.seq')
-    SEQ_INPUT, SEQ_DICT = seq_file_input(seq_file_name='sequences/test1_full.seq')
+    SEQ_INPUT, SEQ_DICT = seq_file_input(seq_file_name='sequences/turbo_FLASH_060924_0444.seq')
+    # SEQ_INPUT, SEQ_DICT = seq_file_input(seq_file_name='sequences/test1_full.seq')
 
     params_path = 'sequences/'
-    # params_filename = "turbo_FLASH_060924_0444"
-    params_filename = "test1_full"
+    params_filename = "turbo_FLASH_060924_0444"
+    # params_filename = "test1_full"
 
     file = open(params_path + params_filename + ".json", 'r')
     SEQ_PARAM = json.load(file)
     file.close()
+
     '''
     integartion of srv_seq_gen
     '''
@@ -455,18 +491,12 @@ if __name__ == "__main__":
 
     # artificial delays due to construction of the MRI
     # искусственные задержки из-за тех. особенностей МРТ
-    RF_dtime = 100 * 1e-6
-    TR_dtime = 100 * 1e-6
+    RF_dtime = 10 * 1e-6
+    TR_dtime = 10 * 1e-6
 
     time_info = SEQ_INPUT.duration()
     blocks_number = time_info[1]
     time_dur = time_info[0]
-    print(time_dur)
-    time_step = 20 * 1e-9
-    SYNC_STEP = time_step
-    N_samples = int(time_dur / time_step)
-    print(N_samples)
-    time_sample = np.linspace(0, time_dur, N_samples)
 
     # output interpretation. all formats of files defined in method
     # интерпретация выхода. Все форматы файлов определены в методе
@@ -478,17 +508,4 @@ if __name__ == "__main__":
     ADC_raster = local_definitions['AdcRasterTime']
     RF_raster = local_definitions['RadiofrequencyRasterTime']
 
-    gate_adc = np.zeros(N_samples)
-    gate_rf = np.zeros(N_samples)
-    gate_tr_switch = np.ones(N_samples)
-    gate_gx = np.zeros(N_samples)
-    gate_gy = np.zeros(N_samples)
-    gate_gz = np.zeros(N_samples)
-
-    local_delay_rf = RF_dtime
-    local_delay_tr = TR_dtime
-    local_raster_time = time_step
-
-    RF_ASSIST = [SEQ_DICT['t_rf'][0] - RF_dtime, SEQ_DICT['t_rf'][-1]]
-
-    synchronization(N_samples, RF_ASSIST, SEQ_DICT)
+    synchronization(SEQ_INPUT)
