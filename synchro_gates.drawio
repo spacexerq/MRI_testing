@@ -1,0 +1,128 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 YaBrowser/24.12.0.0 Safari/537.36" version="26.0.6">
+  <diagram name="Страница — 1" id="XjpmtIb6veb4254Rgo0y">
+    <mxGraphModel dx="1002" dy="567" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-1" target="_25SpZxCiOUU8u4NPtRs-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-1" target="_25SpZxCiOUU8u4NPtRs-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="_25SpZxCiOUU8u4NPtRs-1" target="_25SpZxCiOUU8u4NPtRs-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-1" target="_25SpZxCiOUU8u4NPtRs-30" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-1" value="Синхронизатор" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="210" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-2" target="_25SpZxCiOUU8u4NPtRs-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-2" value="Hack RF" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="230" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-3" value="TR SWITCH" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="320" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-4" value="RF amplifier" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="320" y="320" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-5" value="ГРУ (3 шт)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="320" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-12" value="delay" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+          <mxGeometry x="320" y="150" width="30" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-13" value="0,0,0,127,127" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="390" y="110" width="240" height="30" as="geometry" />
+        </mxCell>
+        <UserObject label="bin (2-20 млн. выборок)" placeholders="1" name="Variable" id="_25SpZxCiOUU8u4NPtRs-16">
+          <mxCell style="text;html=1;strokeColor=#d79b00;fillColor=#ffe6cc;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" parent="1" vertex="1">
+            <mxGeometry x="425" y="90" width="170" height="20" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-17" value="delay" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="320" y="320" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-18" value="delay" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="150" y="320" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-19" value="delay" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="320" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-21" value="Ограничения&lt;div&gt;&lt;br&gt;&lt;div&gt;Минимальная длина события синхронизатора 20 тактов (400нс)&lt;br&gt;&lt;br&gt;Должен быть как минимум 1 High&amp;nbsp; level TTL для РЧ сигнала.&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Гейт ГРУ должен перейти из состояния &quot;1&quot; в &quot;0&quot;&lt;br&gt;&lt;br&gt;Минимальный набор файлов:&amp;nbsp;&lt;br&gt;&lt;br&gt;.txt файл(ы) для ГРУ&lt;br&gt;.bin файл для Hack RF&lt;/div&gt;&lt;/div&gt;&lt;div&gt;.xml файл для picoscope&lt;/div&gt;&lt;div&gt;.xml файл для синхронизатора&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Тест на суммарную длительность последовательности&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Визуализация ИП по данным для передачи&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="620" y="210" width="210" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-22" value="Гейты синхронизации" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" parent="1" vertex="1">
+          <mxGeometry x="140" y="30" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="_25SpZxCiOUU8u4NPtRs-23" target="_25SpZxCiOUU8u4NPtRs-25" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-23" value="задержка для РЧ, передача в градиенты &quot;1&quot;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="20" y="540" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="_25SpZxCiOUU8u4NPtRs-25" target="_25SpZxCiOUU8u4NPtRs-28" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-25" value="задержка для РЧ, передача в градиенты &quot;0&quot;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="540" width="80" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-28" value="РЧ" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="310" y="540" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-30" value="Picoscope" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="475" y="320" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-33" value="delay?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="80" y="210" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-34" value="delay?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="180" y="270" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-35" value="delay?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="360" y="270" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-36" value="delay?" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="210" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-37" target="_25SpZxCiOUU8u4NPtRs-39" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-37" value="Скорость передачи бит 2 млн выборок (растр 5 e-7)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="37.5" y="720" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-39" value="Задержка 17,7 мкс" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="242.5" y="720" width="120" height="60" as="geometry" />
+        </mxCell>
+        <UserObject label="Hack RF (windows)" placeholders="1" name="Variable" id="_25SpZxCiOUU8u4NPtRs-41">
+          <mxCell style="text;html=1;strokeColor=#d79b00;fillColor=#ffe6cc;align=center;verticalAlign=middle;whiteSpace=wrap;overflow=hidden;" parent="1" vertex="1">
+            <mxGeometry x="35" y="670" width="170" height="20" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-43" target="_25SpZxCiOUU8u4NPtRs-44" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-43" value="Скорость передачи бит 2 млн выборок (растр 2,5 e-8)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="35" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-44" value="Задержка 3,6 мкс" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="810" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-45" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="_25SpZxCiOUU8u4NPtRs-46" target="_25SpZxCiOUU8u4NPtRs-47" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-46" value="Скорость передачи бит 2 млн выборок (растр 5 e-8)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="35" y="900" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="_25SpZxCiOUU8u4NPtRs-47" value="Задержка 1,77 мкс" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="900" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
